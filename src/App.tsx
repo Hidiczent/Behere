@@ -1,11 +1,7 @@
 import "./App.css";
-
+import AppRoutes from "./routes/AppRoutes";
 const App = () => {
-  return (
-    <div className="text-center p-10">
-      <h1 className="text-3xl font-bold text-blue-600">สวัสดี Tailwind v3!</h1>
-    </div>
-  );
+  return <AppRoutes />;
 };
 
 export default App;
