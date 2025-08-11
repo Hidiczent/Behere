@@ -1,0 +1,49 @@
+/* Google Fonts — เอาเท่าที่ใช้จริง พอ */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600&family=Noto+Sans+Lao+Looped:wght@600;700&family=Noto+Serif+Lao:wght@600&display=swap");
+
+/* ปรับการเรนเดอร์ให้นุ่ม */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ตั้ง font stack ให้ดีต่อทั้งลาว/ไทย/ละติน */
+:root {
+  --font-body: "Noto Sans Lao", "Noto Sans Thai", ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --font-display: "Noto Sans Lao Looped", "Noto Sans Lao", "Noto Sans Thai",
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+
+  --font-serif: "Noto Serif Lao", "Noto Sans Lao", "Noto Sans Thai", serif;
+}
+
+/* ใช้ Noto Sans Lao สำหรับบอดี้ */
+body {
+  font-family: var(--font-body);
+}
+
+/* ยูทิลิตีเล็ก ๆ สำหรับที่ต้องการฟีลนุ่ม/ปลอดภัย */
+.font-display {
+  font-family: var(--font-display);
+}
+.font-serif-lo {
+  font-family: var(--font-serif);
+}
+
+/* หัวเรื่องให้อ่านโปร่งขึ้น */
+.h-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.01em; /* เพิ่มช่องไฟนิดเดียว */
+}
+
+/* เนื้อความให้อ่านสบาย */
+.p-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0.003em;
+}
