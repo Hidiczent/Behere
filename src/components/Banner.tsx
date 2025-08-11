@@ -1,4 +1,5 @@
 import heroJpg from "@/assets/img/banner7.jpg"; // ← เปลี่ยนชื่อไฟล์ตามจริง
+import { NavLink } from "react-router-dom";
 
 const Baner = () => {
   return (
@@ -33,7 +34,6 @@ const Baner = () => {
               ແລະ " ເຈົ້າບໍ່ໄດ້ຢູ່ຄົນດຽວ "
             </span>
           </h1>
-
           <p className="font-laoLooped mx-auto mt-6 max-w-prose text-pretty text-base sm:text-lg leading-[1.85] ext-secondary">
             ບາງຄັ້ງການທີ່ໄດ້ເວົ້າອອກມາກໍພຽງພໍ ແລະ ບາງຄັ້ງການທີ່ມີຄົນຮັບຟັງ
             ໂດຍທີ່ບໍ່ມີການຕັດສິນກໍເປັນສິ່ງທີ່ເຮົາຕ້ອງການ
@@ -42,21 +42,20 @@ const Baner = () => {
           </p>
 
           <div className="mt-8 flex items-center justify-center gap-3 sm:gap-4">
-            <a
-              href="#"
+            <NavLink
+              to="/"
               className="font-laoLooped inline-flex items-center rounded-xl bg-primary px-5 py-3 text-white font-semibold shadow-sm
                  transition hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               ເລີ່ມຕົ້ນໃຊ້ງານ
-            </a>
-
-            <a
-              href="#"
+            </NavLink>
+            <NavLink
+              to="#"
               className="font-laoLooped inline-flex items-center rounded-xl border border-primary px-5 py-3 text-secondary font-semibold
                  transition hover:bg-primary hover:text-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
             >
               ຮຽນຮູ້ເພິ່ມເຕິມ
-            </a>
+            </NavLink>
           </div>
         </div>
       </div>
