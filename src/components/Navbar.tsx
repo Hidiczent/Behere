@@ -47,7 +47,7 @@ export default function Navbar() {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/contact" className={linkClass}>
+          <NavLink to="/content" className={linkClass}>
             ຄຳແນະນຳ
           </NavLink>
         </li>

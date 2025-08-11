@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import About from "../pages/ChatChanel";
-import Contact from "../pages/Contact";
+import Content from "../pages/Content";
 import MainLayout from "../layouts/MainLayout";
 import Service from "../pages/Service";
 import AuthPage from "../pages/Auth";
@@ -16,7 +16,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<AuthPage />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
 
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/content" element={<Content />} />
         <Route path="/service" element={<Service />} />
       </Route>
     </Routes>
