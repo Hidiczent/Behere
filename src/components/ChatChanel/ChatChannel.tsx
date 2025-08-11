@@ -51,7 +51,7 @@ export default function RoleIntro({
           {/* เส้นแบ่งตั้ง */}
           <div className="hidden md:block h-56 w-[3px] bg-primary/50 mx-auto rounded" />
 
-          {/* ขวา */}
+          {/* right */}
           <div className="flex flex-col items-center text-center gap-4">
             {rightIcon || leftIcon ? (
               <img
@@ -66,6 +66,7 @@ export default function RoleIntro({
             ) : (
               <FallbackBubble />
             )}
+            
             <p className="text-primary/90 text-lg md:text-xl leading-relaxed">
               {rightText}
             </p>
