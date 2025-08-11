@@ -27,8 +27,14 @@ export default function ContentDetail() {
   return (
     <article className="font-laoLooped max-w-3xl mx-auto p-6 text-gray-800">
       <header className="mb-4">
+
         <h1 className="text-2xl font-bold">{sec.title}</h1>
-        <p className="mt-2 text-gray-600 mb-10">{sec.intro}</p>
+        <p className=" mt-10 text-gray-600 mb-10">
+          <strong className="font-bold">
+            {sec.body}
+          </strong>
+          <br />
+          {sec.intro}</p>
         {sec.images && (
           <img
             src={resolveContentImage(sec.images)}
@@ -42,7 +48,7 @@ export default function ContentDetail() {
         {sec.items?.map((it) => (
           <div key={it.no} className="bg-white p-4 rounded-lg shadow-sm">
             <h3 className="font-semibold">
-              {it.no}. {it.title}
+              {it.no} {it.title}
             </h3>
             <p className="mt-1 text-sm text-gray-700">{it.body}</p>
           </div>
