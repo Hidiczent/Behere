@@ -35,7 +35,7 @@ export const Card: React.FC = () => {
                   <img
                     src={resolveContentImage(sec.images)}
                     alt={sec.id}
-                    className="max-w-full rounded-lg"
+                    className="w-78 h-48 object-cover rounded-lg" // กำหนดขนาดคงที่
                   />
                 )}
               </Link>

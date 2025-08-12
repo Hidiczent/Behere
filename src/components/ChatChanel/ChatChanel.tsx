@@ -3,6 +3,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { Message, Role } from "../../types/Message";
 import MessageBubble from "./MessageBubble";
 import MatchingScreen from "./MatchingScreen";
+import ConfirmEndModal from "../Alert/ConfirmEndModal"; // ปรับ path ให้ตรงกับโปรเจกต์จริง
+import ReportModal from "./ReportModal";
 import { useSearchParams } from "react-router-dom";
 
 const HTTP_BASE =
@@ -13,6 +15,7 @@ const roleMap: Record<Role, "talker" | "listener"> = {
   venter: "talker",
   listener: "listener",
 };
+
 const DBG = import.meta.env.VITE_DEBUG_WS === "1";
 const log = (...a: unknown[]) => {
   if (DBG) console.log(...a);
@@ -28,16 +31,26 @@ export default function ChatBubbles() {
   const [connected, setConnected] = useState(false);
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [myUid, setMyUid] = useState<number | null>(null);
-  const [queuing, setQueuing] = useState(false); // สำหรับหน้า matching
+  const [queuing, setQueuing] = useState(false);
+
+  // โมดัล
+  const [showEndConfirm, setShowEndConfirm] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+  const [lastConversationId, setLastConversationId] = useState<number | null>(
+    null
+  );
+  const [peerId, setPeerId] = useState<number | null>(null);
 
   const listRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const joinedOnceRef = useRef(false);
 
-  // refs ให้ handler ใช้ค่าล่าสุด
+  // refs สำหรับอ่านค่า state ล่าสุดใน handler
   const roleRef = useRef<Role>(role);
   const myUidRef = useRef<number | null>(null);
   const conversationIdRef = useRef<number | null>(null);
+  const showReportRef = useRef<boolean>(false);
+
   useEffect(() => {
     roleRef.current = role;
   }, [role]);
@@ -47,6 +60,9 @@ export default function ChatBubbles() {
   useEffect(() => {
     conversationIdRef.current = conversationId;
   }, [conversationId]);
+  useEffect(() => {
+    showReportRef.current = showReport;
+  }, [showReport]);
 
   // auto scroll
   useEffect(() => {
@@ -60,8 +76,8 @@ export default function ChatBubbles() {
     [text, conversationId]
   );
 
+  // เปิด/ควบคุม WebSocket
   useEffect(() => {
-    // ป้องกันเปิดซ้ำ
     if (
       wsRef.current &&
       (wsRef.current.readyState === WebSocket.CONNECTING ||
@@ -123,12 +139,11 @@ export default function ChatBubbles() {
 
         if (msg.type === "HELLO") setMyUid(msg.uid);
 
-        if (msg.type === "QUEUED") {
-          setQueuing(true);
-        }
+        if (msg.type === "QUEUED") setQueuing(true);
 
         if (msg.type === "MATCH_FOUND") {
           setConversationId(msg.conversationId);
+          setLastConversationId(msg.conversationId);
           setQueuing(false);
           setMessages((prev) => [
             ...prev,
@@ -143,6 +158,7 @@ export default function ChatBubbles() {
 
         if (msg.type === "MESSAGE_NEW") {
           const mine = msg.from === myUidRef.current;
+          if (!mine && typeof msg.from === "number") setPeerId(msg.from);
           setMessages((prev) => [
             ...prev,
             {
@@ -172,9 +188,15 @@ export default function ChatBubbles() {
               time: Date.now(),
             },
           ]);
+          if (typeof msg.conversationId === "number") {
+            setLastConversationId(msg.conversationId);
+          }
           setConversationId(null);
           setQueuing(false);
-          joinedOnceRef.current = false; // ให้จับคู่ใหม่ได้
+          joinedOnceRef.current = false;
+
+          // เปิด Report ถ้ายังไม่ได้เปิด (กันซ้ำ)
+          if (!showReportRef.current) setShowReport(true);
         }
 
         if (msg.type === "ERROR") {
@@ -198,7 +220,7 @@ export default function ChatBubbles() {
       try {
         ws.close();
       } catch {
-        console.log("[FE] ws close error");
+        console.log("Error closing WebSocket");
       }
       if (wsRef.current === ws) wsRef.current = null;
     };
@@ -216,96 +238,130 @@ export default function ChatBubbles() {
     setText("");
   }
 
-  function handleEnd() {
+  // เปิดโมดัลยืนยันก่อน END
+  function onClickEnd() {
+    if (!conversationId) return;
+    setShowEndConfirm(true);
+  }
+
+  async function confirmEndNow() {
     if (!wsRef.current || !conversationId) return;
-    const payload = { type: "END", conversationId: Number(conversationId) };
-    wsRef.current.send(JSON.stringify(payload));
-    log("[FE] send END", payload);
+    const cid = Number(conversationId);
+    setLastConversationId(cid);
+    // เปิดหน้า report ทันที (ให้ผู้ใช้เลือกจะส่ง/ไม่ส่ง)
+    setShowReport(true);
+    setShowEndConfirm(false);
+    // ส่ง END ไปยังเซิร์ฟเวอร์
+    wsRef.current.send(JSON.stringify({ type: "END", conversationId: cid }));
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if ((e.key === "Enter" || e.key === "Return") && (e.ctrlKey || e.metaKey))
+    if ((e.key === "Enter" || e.key === "Return") && (e.ctrlKey || e.metaKey)) {
       handleSend();
+    }
   }
 
-  // ถ้ายังไม่ match ให้โชว์หน้ารอจับคู่
-  if (!conversationId) {
-    return (
-      <MatchingScreen
-        role={role}
-        connected={connected}
-        queuing={queuing}
-        onCancel={() => window.history.back()}
-      />
-    );
-  }
+  const matched = !!conversationId;
 
   return (
-    <div className="min-h-[70vh] max-w-4xl mx-auto p-4 flex flex-col gap-3 font-laoLooped">
-      <header className="flex items-center justify-between bg-white/70 backdrop-blur rounded-2xl shadow p-4">
-        <div className="flex items-center gap-3">
-          <span className="text-xl font-bold">ຫ້ອງສົນທະນາໃຫ້ກຳລັງໃຈ</span>
-        </div>
-        <div className="flex items-center gap-2 text-xs text-gray-600">
-          <span className="rounded-full px-2 py-1 bg-primary text-secondary">
-            {label(role)}
-          </span>
-          <span
-            className={`rounded-full px-2 py-1 ${
-              conversationId
-                ? "bg-green-500 text-white"
-                : connected
-                ? "bg-yellow-400 text-black"
-                : "bg-red-500 text-white"
-            }`}
+    <>
+      {matched ? (
+        // ======= หน้าห้องแชท =======
+        <div className="min-h-[70vh] max-w-4xl mx-auto p-4 flex flex-col gap-3 font-laoLooped">
+          <header className="flex items-center justify-between bg-white/70 backdrop-blur rounded-2xl shadow p-4">
+            <div className="flex items-center gap-3">
+              <span className="text-xl font-bold">ຫ້ອງສົນທະນາໃຫ້ກຳລັງໃຈ</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-gray-600">
+              <span className="rounded-full px-2 py-1 bg-primary text-secondary">
+                {label(role)}
+              </span>
+              <span
+                className={`rounded-full px-2 py-1 ${
+                  conversationId
+                    ? "bg-green-500 text-white"
+                    : connected
+                    ? "bg-yellow-400 text-black"
+                    : "bg-red-500 text-white"
+                }`}
+              >
+                {conversationId
+                  ? "ກຳລັງສົນທະນາ"
+                  : connected
+                  ? "ກຳລັງຈັບຄູ່"
+                  : "ຍັງບໍ່ໄດ້ເຊື່ອມຕໍ່"}
+              </span>
+            </div>
+          </header>
+
+          <div
+            ref={listRef}
+            className="flex-1 overflow-y-auto bg-neutral-50 rounded-2xl p-3 border border-neutral-200 space-y-3"
           >
-            {conversationId
-              ? "ກຳລັງສົນທະນາ"
-              : connected
-              ? "ກຳລັງຈັບຄູ່"
-              : "ຍັງບໍ່ໄດ້ເຊື່ອມຕໍ່"}
-          </span>
-        </div>
-      </header>
+            {messages.map((m) => (
+              <MessageBubble key={m.id} msg={m} />
+            ))}
+          </div>
 
-      <div
-        ref={listRef}
-        className="flex-1 overflow-y-auto bg-neutral-50 rounded-2xl p-3 border border-neutral-200 space-y-3"
-      >
-        {messages.map((m) => (
-          <MessageBubble key={m.id} msg={m} />
-        ))}
-      </div>
-
-      <div className="bg-white rounded-2xl shadow p-3 border border-neutral-200">
-        <div className="flex flex-col sm:flex-row gap-3 items-stretch">
-          <input
-            className="flex-1 rounded-xl border border-neutral-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/40"
-            placeholder="ພິມຂໍ້ຄວາມ (⌘/Ctrl + Enter เพื่อส่ง)"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={handleKeyDown}
-            disabled={!conversationId}
-          />
-          <div className="flex gap-2">
-            <button
-              onClick={handleSend}
-              disabled={!canSend}
-              className="rounded-xl px-5 py-3 font-medium shadow disabled:opacity-40 disabled:cursor-not-allowed bg-primary text-white hover:opacity-90"
-            >
-              ສົ່ງຂໍ້ຄວາມ
-            </button>
-            <button
-              onClick={handleEnd}
-              disabled={!conversationId}
-              className="rounded-xl px-4 py-3 font-medium shadow disabled:opacity-40 disabled:cursor-not-allowed border"
-            >
-              ຈົບການສົນທະນາ
-            </button>
+          <div className="bg-white rounded-2xl shadow p-3 border border-neutral-200">
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+              <input
+                className="flex-1 rounded-xl border border-neutral-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                placeholder="ພິມຂໍ້ຄວາມ (⌘/Ctrl + Enter เพื่อส่ง)"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                onKeyDown={handleKeyDown}
+                disabled={!conversationId}
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSend}
+                  disabled={!canSend}
+                  className="rounded-xl px-5 py-3 font-medium shadow disabled:opacity-40 disabled:cursor-not-allowed bg-primary text-white hover:opacity-90"
+                >
+                  ສົ່ງຂໍ້ຄວາມ
+                </button>
+                <button
+                  onClick={onClickEnd}
+                  disabled={!conversationId}
+                  className="rounded-xl px-4 py-3 font-medium shadow disabled:opacity-40 disabled:cursor-not-allowed border"
+                >
+                  ຈົບການສົນທະນາ
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      ) : (
+        // ======= หน้ารอจับคู่ =======
+        <MatchingScreen
+          role={role}
+          connected={connected}
+          queuing={queuing}
+          onCancel={() => {
+            if (wsRef.current?.readyState === WebSocket.OPEN) {
+              wsRef.current.send(JSON.stringify({ type: "QUEUE_LEAVE" }));
+            }
+            history.back();
+          }}
+        />
+      )}
+
+      {/* โมดัลยืนยันจบ — mount เสมอ */}
+      <ConfirmEndModal
+        open={showEndConfirm}
+        onCancel={() => setShowEndConfirm(false)}
+        onConfirm={confirmEndNow}
+      />
+
+      {/* โมดัลรายงานผู้ใช้ — mount เสมอ */}
+      <ReportModal
+        open={showReport}
+        onClose={() => setShowReport(false)}
+        conversationId={lastConversationId}
+        reportedUserId={peerId ?? undefined}
+      />
+    </>
   );
 }
 

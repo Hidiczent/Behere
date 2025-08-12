@@ -7,6 +7,7 @@ export interface Item {
 export interface Section {
     id: string;
     title: string;
+    body:string
     images?: string;
     intro?: string;
     items?: Item[];

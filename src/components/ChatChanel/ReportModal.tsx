@@ -1,6 +1,6 @@
 // src/components/ChatChanel/ReportModal.tsx
 import { useState } from "react";
-import { api } from "../../service/api"; // axios instance ของคุณ
+import { api } from "../../service/api";
 
 export default function ReportModal({
   open,
@@ -15,11 +15,13 @@ export default function ReportModal({
 }) {
   const [reason, setReason] = useState("spam");
   const [detail, setDetail] = useState("");
+  const [sending, setSending] = useState(false);
 
   if (!open) return null;
 
   const submit = async () => {
     try {
+      setSending(true);
       await api.post("/reports", {
         conversationId,
         reportedUserId,
@@ -27,16 +29,21 @@ export default function ReportModal({
         detail,
       });
       onClose();
-      alert("ส่งรายงานแล้ว ขอบคุณที่ช่วยแจ้งให้เราทราบ 🙏");
+      alert("ສົ່ງລາຍງານແລ້ວ ຂອບໃຈທີ່ລາຍງານ 🙏");
     } catch {
-      alert("ส่งรายงานไม่สำเร็จ ลองใหม่อีกครั้ง");
+      alert("ສົ່ງລາຍງານບໍ່ສຳເລັດ ກາລຸນາລອງໃໝ່ອີກຄັ້ງ");
+    } finally {
+      setSending(false);
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/30">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow">
-        <h3 className="text-lg font-bold mb-4">รายงานผู้ใช้</h3>
+        <h3 className="text-lg font-bold mb-2">ລາຍງານຜູ້ໃຊ້</h3>
+        <p className="text-sm text-slate-600 mb-4">
+          ຕ້ອງການລາຍງານຄູ່ສົນທະນາຫຼືບໍ່ ?
+        </p>
 
         <div className="space-y-3 mb-4">
           <label className="flex items-center gap-2">
@@ -47,7 +54,7 @@ export default function ReportModal({
               checked={reason === "spam"}
               onChange={() => setReason("spam")}
             />
-            <span>สแปม/กวน</span>
+            <span>ສະແປມ/ກວນ</span>
           </label>
           <label className="flex items-center gap-2">
             <input
@@ -57,7 +64,7 @@ export default function ReportModal({
               checked={reason === "harassment"}
               onChange={() => setReason("harassment")}
             />
-            <span>คุกคาม/ไม่เหมาะสม</span>
+            <span>ຄຸກຄາມ/ບໍ່ເໝາະສົມ</span>
           </label>
           <label className="flex items-center gap-2">
             <input
@@ -67,7 +74,7 @@ export default function ReportModal({
               checked={reason === "other"}
               onChange={() => setReason("other")}
             />
-            <span>อื่น ๆ</span>
+            <span>ອື່ນ ໆ</span>
           </label>
         </div>
 
@@ -80,14 +87,21 @@ export default function ReportModal({
         />
 
         <div className="flex justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2 rounded-xl border">
-            ปิด
+
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-xl border disabled:opacity-50"
+            disabled={sending}
+          >
+            ບໍ່ລາຍງານ
           </button>
+
           <button
             onClick={submit}
-            className="px-4 py-2 rounded-xl bg-primary text-white"
+            disabled={sending}
+            className="px-4 py-2 rounded-xl bg-primary text-white disabled:opacity-50"
           >
-            ส่งรายงาน
+            {sending ? "ກຳລັງສົ່ງ" : "ສົ່ງລາຍງານ"}
           </button>
         </div>
       </div>
