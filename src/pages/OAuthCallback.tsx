@@ -23,7 +23,7 @@ export default function OAuthCallback() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      กำลังเข้าสู่ระบบด้วย Google...
+      ກຳລັງເຂົ້າສູ່ລະບົບດ້ວຍ  Google...
     </div>
   );
 }

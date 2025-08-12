@@ -10,7 +10,6 @@
         "max_per_question": 1,
         "pass_rule": { "type": "percent_of_max", "value": 0.7 }
       },
-
       "questions": [
         {
           "id": "q1",

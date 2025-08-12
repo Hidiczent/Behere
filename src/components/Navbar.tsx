@@ -42,7 +42,7 @@ export default function Navbar() {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/about" className={linkClass}>
+          <NavLink to="/chatlopby" className={linkClass}>
             ເລືອກບົດບາດ
           </NavLink>
         </li>

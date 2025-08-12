@@ -27,9 +27,9 @@ const Baner = () => {
         <div className="mx-auto max-w-3xl py-16 sm:py-24 lg:py-32 text-center text-white">
           <h1
             className="font-laoLooped text-3xl sm:text-4xl lg:text-5xl font-bold
-               leading-[1.25] sm:leading-[1.25] tracking-[0.015em] sm:tracking-[0.02em] text-primary"
+               leading-[1.25] sm:leading-[1.25] tracking-[0.015em] sm:tracking-[0.02em] text-[#F8F1E6]"
           >
-            <span className="block">ເພາະຄວາມຮູ້ສຶກຂອງເຈົ້າມີຄຸນຄ່າ</span>
+            <span className="block ">ເພາະຄວາມຮູ້ສຶກຂອງເຈົ້າມີຄຸນຄ່າ</span>
             <span className="mt-10 inline-block rounded-xl text-secondary">
               ແລະ " ເຈົ້າບໍ່ໄດ້ຢູ່ຄົນດຽວ "
             </span>
