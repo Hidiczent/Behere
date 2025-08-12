@@ -30,14 +30,16 @@ export const Card: React.FC = () => {
               key={sec.id}
               className="bg-white rounded-lg shadow-md w-[300px] text-center p-4 transition-transform duration-200 hover:-translate-y-1"
             >
-              <Link to={`/content/${sec.id}`}>
-                {sec.images && (
-                  <img
-                    src={resolveContentImage(sec.images)}
-                    alt={sec.id}
-                    className="max-w-full rounded-lg"
-                  />
-                )}
+
+                <Link to={`/content/${sec.id}`}>
+                  {sec.images && (
+                    <img
+                      src={resolveContentImage(sec.images)}
+                      alt={sec.id}
+                      className="w-78 h-48 object-cover rounded-lg" // กำหนดขนาดคงที่
+                    />
+                  )}
+                
               </Link>
               <h3 className="mt-3 font-semibold">{sec.title}</h3>
               <p className="mt-2 text-sm text-gray-600 line-clamp-3">
