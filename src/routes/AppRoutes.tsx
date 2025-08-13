@@ -6,9 +6,9 @@ import Service from "../pages/Service";
 import AuthPage from "../pages/Auth";
 import AuthCallback from "../pages/OAuthCallback";
 import ContentDetail from "../pages/ContentDetail";
-import { Card } from "../components/Content/Card";
 import ChatChanel from "../pages/ChatRoom";
-
+import Quizz from "../pages/Quizz"
+import { Card } from "../components/content/Card";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -20,11 +20,14 @@ const AppRoutes = () => {
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/content" element={<Outlet />}>
           <Route index element={<Card />} /> {/* /content */}
+          
           <Route path=":id" element={<ContentDetail />} /> {/* /content/:id */}
         </Route>
 
         {/* เท่ากับ /content/:id */}
         <Route path="/service" element={<Service />} />
+                <Route path="/quizz" element={< Quizz/>} />
+
       </Route>
     </Routes>
   );
