@@ -43,14 +43,14 @@ const Baner = () => {
 
           <div className="mt-8 flex items-center justify-center gap-3 sm:gap-4">
             <NavLink
-              to="/"
+              to="/chatlopby"
               className="font-laoLooped inline-flex items-center rounded-xl bg-primary px-5 py-3 text-white font-semibold shadow-sm
                  transition hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               ເລີ່ມຕົ້ນໃຊ້ງານ
             </NavLink>
             <NavLink
-              to="#"
+              to="/content"
               className="font-laoLooped inline-flex items-center rounded-xl border border-primary px-5 py-3 text-secondary font-semibold
                  transition hover:bg-primary hover:text-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
             >

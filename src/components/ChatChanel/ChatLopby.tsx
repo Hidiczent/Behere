@@ -1,4 +1,7 @@
-import { Link } from "react-router-dom";
+
+// src/pages/RoleIntro.tsx
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 type Props = {
   title?: string;
@@ -21,6 +24,20 @@ export default function RoleIntro({
   rightIcon,
   mirrorRight = true,
 }: Props) {
+  const navigate = useNavigate();
+  const { authed, loading } = useAuth();
+
+  const destVenter = "/chatchanel?role=venter";
+  const destListener = "/chatchanel?role=listener";
+
+  const guardClick =
+    (dest: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (!authed) {
+        e.preventDefault();
+        navigate(`/login?redirect=${encodeURIComponent(dest)}`);
+      }
+    };
+
   return (
     <section className="min-h-[70vh] bg-secondary/5 border border-secondary/20 rounded-xl flex items-center justify-center px-4">
       <div className="w-full max-w-5xl rounded-xl bg-secondary/5 border border-secondary/20 p-6 md:p-10 font-laoLooped">
@@ -29,7 +46,7 @@ export default function RoleIntro({
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-8 md:gap-12">
-          {/* left */}
+          {/* Left (Venter) */}
           <div className="flex flex-col items-center text-center gap-4">
             {leftIcon ? (
               <img
@@ -47,17 +64,18 @@ export default function RoleIntro({
             </p>
 
             <Link
-              to={{ pathname: "/chatchanel", search: "?role=venter" }}
+              to={destVenter}
+              onClick={guardClick(destVenter)}
+              aria-disabled={loading}
               className="inline-block rounded-md bg-primary px-10 py-3 text-sm font-bold text-secondary shadow-sm"
             >
               {leftLabel}
             </Link>
           </div>
 
-          {/* divider */}
           <div className="hidden md:block h-56 w-[3px] bg-primary/50 mx-auto rounded" />
 
-          {/* right */}
+          {/* Right (Listener) */}
           <div className="flex flex-col items-center text-center gap-4">
             {rightIcon || leftIcon ? (
               <img
@@ -78,7 +96,9 @@ export default function RoleIntro({
             </p>
 
             <Link
-              to={{ pathname: "/chatchanel", search: "?role=listener" }}
+              to={destListener}
+              onClick={guardClick(destListener)}
+              aria-disabled={loading}
               className="inline-block rounded-md bg-primary px-10 py-3 text-sm font-bold text-secondary shadow-sm"
             >
               {rightLabel}

@@ -1,4 +1,4 @@
-import type { Role } from "../../types/Message";
+import type { Props, Role } from "../../types/Message";
 import catGif from "../../assets/img/cat-wait.gif";
 import { Link } from "react-router-dom";
 
@@ -7,24 +7,18 @@ const ROLE_LABEL: Record<Role, string> = {
   listener: "ຜູ້ຮັບຟັງ",
 };
 
-type Props = {
-  role: Role;
-  connected?: boolean;
-  queuing?: boolean;
-  onCancel?: () => void;
-};
-
 export default function MatchingScreen({
   role,
   connected,
   queuing,
   onCancel,
+  onRetry,
 }: Props) {
   return (
     <section className="min-h-[70vh] flex items-center justify-center px-4">
       <div className="w-full max-w-xl relative rounded-2xl border border-primary/30 bg-white/70 backdrop-blur p-6 md:p-10 text-center shadow">
         <h2 className="text-xl md:text-2xl font-bold text-primary mb-6">
-          ກຳລັງຈັບຄູ່ ({ROLE_LABEL[role]})
+          ກຳລັງຈັບຄູ່ສົນທະນາ ({ROLE_LABEL[role]})
         </h2>
 
         {/* Clouds */}
@@ -45,20 +39,31 @@ export default function MatchingScreen({
         <p className="text-sm text-slate-600 mb-4">
           {connected
             ? queuing
-              ? "ກຳລັງຄົ້ນຫາຄູ່…"
+              ? "ກຳລັງຄົ້ນຫາຄູ່ສົນທະນາ…"
               : "ກຳລັງເຊື່ອມຕໍ່…"
             : "ກຳລັງເຊື່ອມຕໍ່…"}
         </p>
 
-        {onCancel && (
-          <Link
-            to="/chatlopby" // เช็คด้วยว่าพาธสะกดตรงกับ router: /chatlobby หรือ /chatlopby ?
-            onClick={onCancel}
-            className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium hover:bg-slate-50"
-          >
-            ຍົກເລີກ
-          </Link>
-        )}
+        <div className="flex items-center justify-center gap-3">
+          {onRetry && connected && !queuing && (
+            <button
+              onClick={onRetry}
+              className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium hover:bg-slate-50"
+            >
+              ຈັບຄູ່ໃໝ່
+            </button>
+          )}
+
+          {onCancel && (
+            <Link
+              to="/chatlopby" // ตรวจให้ตรงกับ router คุณ (ตอนนี้ใช้ /chatlopby)
+              onClick={onCancel}
+              className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium hover:bg-slate-50"
+            >
+              ຍົກເລີກ
+            </Link>
+          )}
+        </div>
       </div>
     </section>
   );

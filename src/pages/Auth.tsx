@@ -1,138 +1,80 @@
 // src/pages/Auth.tsx
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { api } from "../service/api";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const API_BASE =
   (import.meta.env.VITE_API_BASE_URL as string) || "http://localhost:5050";
 
 export default function AuthPage() {
-  const [mode, setMode] = useState<"login" | "register">("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [sp] = useSearchParams();
+  const redirect = sp.get("redirect") || "/";
+
   const navigate = useNavigate();
+  const { authed, loading } = useAuth();
+  const [busy, setBusy] = useState(false);
 
-  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setBusy(true);
-    setError("");
-    try {
-      if (mode === "login") {
-        await api.post("/auth/login", { email, password });
-      } else {
-        await api.post("/auth/register", { email, password });
-      }
-      navigate("/");
-    } catch (err: unknown) {
-      const message = axios.isAxiosError(err)
-        ? err.response?.data?.message ?? err.message
-        : err instanceof Error
-        ? err.message
-        : "Error";
-      setError(message);
-    } finally {
-      setBusy(false);
+  // ถ้าล็อกอินอยู่แล้ว พาออกทันที
+  useEffect(() => {
+    if (!loading && authed) {
+      navigate(redirect, { replace: true });
     }
-  };
+  }, [authed, loading, navigate, redirect]);
 
-  // เริ่ม OAuth ผ่าน Passport (backend จะ redirect -> /oauth/callback?token=...)
   const startGoogle = () => {
+    setBusy(true);
     const url = new URL("/auth/google", API_BASE);
+    url.searchParams.set("redirect", redirect);
     window.location.href = url.toString();
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow p-6">
-        <h1 className="text-2xl font-bold text-center mb-6">
-          {mode === "login" ? "เข้าสู่ระบบ" : "สมัครสมาชิก"}
-        </h1>
-
-        <div className="grid grid-cols-2 gap-2 mb-6">
-          <button
-            type="button"
-            onClick={() => setMode("login")}
-            className={`btn ${
-              mode === "login" ? "bg-black text-white border-black" : "border"
-            }`}
-          >
-            Login
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("register")}
-            className={`btn ${
-              mode === "register"
-                ? "bg-black text-white border-black"
-                : "border"
-            }`}
-          >
-            Register
-          </button>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-4 font-laoLooped">
+      <div className="w-full max-w-md">
+        {/* หัวข้อ */}
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">ເຂົ້າສູ່ລະບົບ</h1>
+          <p className="text-gray-500 mt-1">
+            ໃຊ້ບັນຊີ Google ສໍາລັບເລີ່ມຈັບຄູ່ສົນທະນາໃຫ້ກຳລັງໃຈກັນ 💛
+          </p>
         </div>
 
-        {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
-
-        <form onSubmit={submit} className="space-y-3">
-          <div>
-            <label className="block text-sm mb-1">อีเมล</label>
-            <input
-              className="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-black"
-              required
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-            />
-          </div>
-          <div>
-            <label className="block text-sm mb-1">รหัสผ่าน</label>
-            <input
-              className="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-black"
-              required
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete={
-                mode === "login" ? "current-password" : "new-password"
-              }
-            />
-          </div>
+        {/* การ์ด */}
+        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6">
+          {/* ปุ่ม Google เท่านั้น */}
           <button
-            type="submit"
-            disabled={busy}
-            className="btn bg-black text-white border-black disabled:opacity-60"
+            type="button"
+            onClick={startGoogle}
+            className="w-full rounded-xl border border-gray-300 bg-white py-2.5 text-sm font-semibold hover:bg-gray-50 flex items-center justify-center gap-2 disabled:opacity-60"
+            disabled={busy || (loading ? true : false) || authed}
           >
-            {busy
-              ? "กำลังดำเนินการ..."
-              : mode === "login"
-              ? "เข้าสู่ระบบ"
-              : "สมัครสมาชิก"}
+            <GoogleIcon />
+            {busy ? "ກຳລັງໄປສູ່ Google..." : "Continue with Google"}
           </button>
-        </form>
 
-        <div className="my-4 flex items-center gap-3">
-          <div className="h-px bg-gray-200 flex-1" />
-          <span className="text-xs text-gray-500">หรือ</span>
-          <div className="h-px bg-gray-200 flex-1" />
+          {/* เส้นแบ่งเล็ก ๆ + กลับหน้าแรก */}
+          <div className="text-center mt-5">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+            >
+              <ArrowLeftIcon /> ກັບຽໜ້າຫຼັກ
+            </Link>
+          </div>
+
+          {/* สถานะโหลด */}
+          {loading && (
+            <p className="text-xs text-gray-400 text-center mt-4">
+              ກຳລັງກວດສອບສະຖານະການເຂົ້າສູ່ລະບົບ…
+            </p>
+          )}
         </div>
-
-        <button
-          type="button"
-          onClick={startGoogle}
-          className="btn border flex items-center justify-center gap-2"
-          disabled={busy}
-        >
-          <GoogleIcon /> Continue with Google
-        </button>
       </div>
     </div>
   );
 }
 
+/* ===== Icons ===== */
 function GoogleIcon() {
   return (
     <svg
@@ -156,6 +98,20 @@ function GoogleIcon() {
         fill="#1976D2"
         d="M43.611 20.083H42V20H24v8h11.303c-1.631 4.662-6.033 8-11.303 8-5.295 0-9.652-3.514-11.29-8.318l-6.54 5.04C8.867 41.933 15.861 46 24 46c11.385 0 21-8.615 21-20 0-1.341-.138-2.651-.389-3.917z"
       />
+    </svg>
+  );
+}
+
+function ArrowLeftIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="w-4 h-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M15 18l-6-6 6-6" />
     </svg>
   );
 }
