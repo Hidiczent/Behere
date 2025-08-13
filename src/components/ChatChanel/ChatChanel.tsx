@@ -471,7 +471,7 @@ export default function ChatBubbles() {
         <div className="max-w-md w-full rounded-2xl border bg-white p-6 text-center">
           <h2 className="text-xl font-bold mb-2">ຕ້ອງເຂົ້າລະບົບກ່ອນ</h2>
           <p className="text-slate-600 mb-5">
-            ເພື່ອເລີ່ມຈັບຄູ່ສົນທະນາ โปรดเข้าสู่ระบบก่อนนะ
+            ເພື່ອເລີ່ມຈັບຄູ່ສົນທະນາ ກາລຸນາເຂົ້າສູ່ລະບົບກ່ອນ 
           </p>
           <Link
             to={`/login?redirect=${redirect}`}

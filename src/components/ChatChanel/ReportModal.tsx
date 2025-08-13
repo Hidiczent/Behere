@@ -138,7 +138,7 @@ export default function ReportModal({
               ].join(" ")}
               onClick={() => setTab("report")}
             >
-              รายงาน
+              ລາຍງານ
             </button>
           </div>
         </div>

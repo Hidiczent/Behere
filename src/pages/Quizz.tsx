@@ -1,16 +1,13 @@
-
 import raw from "../../public/data/quiz.json";
 import type { QuizData } from "../types/Quizz";
-import { QuizProvider, useQuiz } from "../context/QuizContext";
+import { useQuiz } from "../hooks/useQuiz";
+import QuizProvider from "../context/QuizContext";
 //import SectionHeader from "./components/SectionHeader";
 import ProgressBar from "../components/Quiz/ProgressBar";
 import QuestionView from "../components/Quiz/QuestionView";
 import Controls from "../components/Quiz/Controls";
 import ResultSummary from "../components/Quiz/ResultSummary";
 import { useMemo } from "react";
-
-
-
 
 function QuizScreen() {
   const { setSubmitted, isSubmitted } = useQuiz();
@@ -30,8 +27,10 @@ function QuizScreen() {
 
   return (
     <div className="max-w-[720px] mx-auto my-6 px-4">
-      <div className="bg-[#d9f6fa] rounded-xl p-6">
-        <div className="font-semibold text-sm text-slate-900/75 mb-2">ຄຳຖາມ</div>
+      <div className="bg-primary rounded-xl p-6">
+        <div className="font-semibold text-lg text-secondary mb-2 text-center">
+          ຄຳຖາມ
+        </div>
         <QuestionView />
       </div>
 

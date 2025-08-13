@@ -1,11 +1,5 @@
-
-
-import { useQuiz } from "../../context/QuizContext";
+import { useQuiz } from "../../hooks/useQuiz";
 import OptionList from "./OptionList";
-
-
-
-
 
 export default function QuestionView() {
   const { linearQuestions, currentIndex } = useQuiz();
@@ -13,7 +7,7 @@ export default function QuestionView() {
 
   return (
     <>
-      <div className="bg-[#cfe8f2] rounded-[14px] px-5 py-4 min-h-[84px] flex items-center leading-relaxed">
+      <div className="bg-secondary rounded-[14px] px-5 py-4 min-h-[84px] flex items-center leading-relaxed text-primary font-bold text-lg">
         {q.text}
       </div>
       <OptionList questionId={q.id} options={q.options} />

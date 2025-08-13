@@ -1,5 +1,5 @@
 import type { Option } from "../../types/Quizz";
-import { useQuiz } from "../../context/QuizContext";
+import { useQuiz } from "../../hooks/useQuiz";
 
 type Props = { questionId: string; options: Option[] };
 
@@ -24,8 +24,8 @@ export default function OptionList({ questionId, options }: Props) {
             onClick={() => setAnswer(questionId, opt.id)}
             className={[
               base,
-              "bg-[#eaf1f7] border-[#d6dee8]",
-              active && "bg-[#eef2ff] border-indigo-500 ring-indigo-500/15",
+              "bg-[#ffff] border-[#d6dee8] text-primary font-semibold",
+              active && "bg-secondary border-primary ",
             ]
               .filter(Boolean)
               .join(" ")}

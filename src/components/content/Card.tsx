@@ -16,7 +16,7 @@ export const Card: React.FC = () => {
     <div className="font-laoLooped text-gray-800">
       <header className="p-5 text-primary text-center">
         <h1 className="m-0 text-2xl font-bold">
-          ບົດຄວາມທີ່ໃຫ້ກຳລັງໃຈ ປະຈຳອາທິດ
+          ບົດຄວາມທີ່ໃຫ້ກຳລັງໃຈ
         </h1>
         <p className="mt-1 text-[#00334d]">
           ລວມເລື່ອງລາວ ແລະ ຄຳເວົ້າທີ່ຈະຊ່ວຍເຕີມພະລັງໃຈໃຫ້ເຈົ້າ

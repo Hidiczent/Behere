@@ -1,4 +1,4 @@
-import { useQuiz } from "../../context/QuizContext";
+import { useQuiz } from "../../hooks/useQuiz";
 
 export default function ProgressBar() {
   const { linearQuestions, currentIndex } = useQuiz();
@@ -9,7 +9,7 @@ export default function ProgressBar() {
     <>
       <div className="h-2 bg-slate-200 rounded overflow-hidden">
         <span
-          className="block h-full bg-indigo-600 transition-[width] duration-200"
+          className="block h-full bg-primary transition-[width] duration-200"
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -17,4 +17,3 @@ export default function ProgressBar() {
     </>
   );
 }
-

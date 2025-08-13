@@ -1,22 +1,11 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
-import type { QuizData, Section, Question, AnswerMap } from "../types/Quizz";
+import React, { useMemo, useState } from "react";
+import type { QuizData, Section } from "../types/Quizz";
 import { shuffle } from "../utils/shuffle";
-
-type PreparedQuestion = Question & { sectionId: string; sectionTitle: string };
-
-type QuizCtx = {
-  sections: Section[];
-  linearQuestions: PreparedQuestion[];
-  currentIndex: number;
-  setCurrentIndex: (i: number) => void;
-  answers: AnswerMap;
-  setAnswer: (qid: string, optionId: string) => void;
-
-  isSubmitted: boolean;
-  setSubmitted: (s: boolean) => void;
-};
-
-const Ctx = createContext<QuizCtx | null>(null);
+import {
+  QuizContext,
+  type QuizCtx,
+  type PreparedQuestion,
+} from "./quiz-context-core";
 
 type Props = {
   data: QuizData;
@@ -25,7 +14,12 @@ type Props = {
   children: React.ReactNode;
 };
 
-export function QuizProvider({ data, perSection = 5, seed, children }: Props) {
+export default function QuizProvider({
+  data,
+  perSection = 5,
+  seed,
+  children,
+}: Props) {
   const preparedSections = useMemo<Section[]>(() => {
     return data.quiz_sections.map((sec, si) => {
       const shuffledQs = shuffle(sec.questions, seed ? seed + si : undefined)
@@ -41,17 +35,18 @@ export function QuizProvider({ data, perSection = 5, seed, children }: Props) {
   const linearQuestions = useMemo<PreparedQuestion[]>(() => {
     const list: PreparedQuestion[] = [];
     preparedSections.forEach((sec) => {
-      sec.questions.forEach((q) => list.push({ ...q, sectionId: sec.section_id, sectionTitle: sec.title }));
+      sec.questions.forEach((q) =>
+        list.push({ ...q, sectionId: sec.section_id, sectionTitle: sec.title })
+      );
     });
     return list;
   }, [preparedSections]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<AnswerMap>({});
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isSubmitted, setSubmitted] = useState(false);
 
   const setAnswer = (qid: string, optionId: string) => {
-    // หลัง submit แล้ว ห้ามแก้
     if (isSubmitted) return;
     setAnswers((prev) => ({ ...prev, [qid]: optionId }));
   };
@@ -67,11 +62,5 @@ export function QuizProvider({ data, perSection = 5, seed, children }: Props) {
     setSubmitted,
   };
 
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  return <QuizContext.Provider value={value}>{children}</QuizContext.Provider>;
 }
-
-export const useQuiz = () => {
-  const ctx = useContext(Ctx);
-  if (!ctx) throw new Error("useQuiz must be used inside <QuizProvider/>");
-  return ctx;
-};

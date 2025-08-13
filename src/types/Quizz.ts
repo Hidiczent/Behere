@@ -52,3 +52,18 @@ export type QuizData = {
 };
 
 export type AnswerMap = Record<string, string | undefined>; // questionId -> optionId
+
+export type OptionID = string | number;
+
+export interface QuizOption {
+  id: OptionID;
+  text?: string;
+  label?: string;
+  weight?: number;          // คะแนนของตัวเลือก
+  isCorrect?: boolean;      // ธงถูก (บางดาต้าใช้ฟิลด์นี้)
+  correct?: boolean;        // หรือบางดาต้าใช้ฟิลด์นี้
+}
+export interface QuizQuestion {
+  id: string | number;
+  options: QuizOption[];
+}

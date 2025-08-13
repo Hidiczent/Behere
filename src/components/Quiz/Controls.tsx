@@ -1,66 +1,68 @@
-import { useQuiz } from "../../context/QuizContext";
+import { useQuiz } from "../../hooks/useQuiz";
 
 type Props = { onSubmit: () => void };
 
 export default function Controls({ onSubmit }: Props) {
-  const { currentIndex, setCurrentIndex, linearQuestions, answers, isSubmitted } = useQuiz();
+  const {
+    currentIndex,
+    setCurrentIndex,
+    linearQuestions,
+    answers,
+    isSubmitted,
+  } = useQuiz();
+
   const total = linearQuestions.length;
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === total - 1;
   const canNext = !!answers[linearQuestions[currentIndex].id];
 
-  if (isSubmitted) {
-    return null; // หลัง submit แล้ว ไม่แสดง Prev/Next/Submit
-  }
+  if (isSubmitted) return null;
 
   return (
-    <div style={{ display: "flex", gap: 10, marginTop: 16, justifyContent: "space-between" }}>
+    <div className="mt-4 flex justify-between gap-2">
+      {/* Prev */}
       <button
         type="button"
         onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
         disabled={isFirst}
-        style={{
-          padding: "10px 14px",
-          borderRadius: 8,
-          border: "1px solid #ddd",
-          background: isFirst ? "#f5f5f5" : "#fff",
-          cursor: isFirst ? "not-allowed" : "pointer",
-        }}
+        className={[
+          "rounded-lg border px-4 py-2 text-sm font-medium transition",
+          isFirst
+            ? "cursor-not-allowed border-slate-200 bg-primary/10 text-slate-400"
+            : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50",
+        ].join(" ")}
       >
-        ◀ Prev
+        ກັບຄືນ
       </button>
 
+      {/* Next / Submit */}
       {!isLast ? (
         <button
           type="button"
           onClick={() => setCurrentIndex(Math.min(total - 1, currentIndex + 1))}
           disabled={!canNext}
-          style={{
-            padding: "10px 14px",
-            borderRadius: 8,
-            border: "1px solid #4f46e5",
-            background: canNext ? "#4f46e5" : "#c7d2fe",
-            color: "#fff",
-            cursor: canNext ? "pointer" : "not-allowed",
-          }}
+          className={[
+            "rounded-lg border px-4 py-2 text-sm font-semibold transition",
+            canNext
+              ? "cursor-pointer border-secondary bg-primary text-secondary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500/60"
+              : "cursor-not-allowed border-primary bg-primary/10 text-primary",
+          ].join(" ")}
         >
-          Next ▶
+          ຕໍ່ໄປ
         </button>
       ) : (
         <button
           type="button"
           onClick={onSubmit}
           disabled={!canNext}
-          style={{
-            padding: "10px 14px",
-            borderRadius: 8,
-            border: "1px solid #16a34a",
-            background: canNext ? "#16a34a" : "#bbf7d0",
-            color: "#fff",
-            cursor: canNext ? "pointer" : "not-allowed",
-          }}
+          className={[
+            "rounded-lg border px-4 py-2 text-sm font-semibold transition",
+            canNext
+              ? "cursor-pointer border-green-600 bg-primary text-white hover:text-secondary focus:outline-none focus:ring-2 focus:ring-green-500/60"
+              : "cursor-not-allowed border-primary/10 bg-primary/10 text-primary",
+          ].join(" ")}
         >
-          Submit ✅
+          ສົ່ງຄຳຕອບ
         </button>
       )}
     </div>
