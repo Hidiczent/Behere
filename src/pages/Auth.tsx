@@ -58,7 +58,7 @@ export default function AuthPage() {
               to="/"
               className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
             >
-              <ArrowLeftIcon /> ກັບຽໜ້າຫຼັກ
+              <ArrowLeftIcon /> ກັບໜ້າຫຼັກ
             </Link>
           </div>
 

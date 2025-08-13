@@ -6,7 +6,7 @@ const ChatLobby = () => {
   return (
     <div className="text-center p-10">
       <ChatLopby
-        title="ສຳນວນບົດບາດ"
+        title="ເລືອກບົດບາດ"
         leftText="ພ້ອມທີ່ຈະລະບາຍເລື່ອງໃນໃຈໃຫ້ຜູ້ຟັງ"
         rightText="ພ້ອມທີ່ຈະຮັບຟັງຜູ້ລະບາຍແລ້ວ"
         leftLabel="ຜູ້ລະບາຍ"

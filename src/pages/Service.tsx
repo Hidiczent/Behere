@@ -13,7 +13,8 @@ export default function AboutUs() {
           <div className="text-center ">
             <p className="mx-auto max-w-3xl text-pretty text-slate-600 text-[17px] sm:text-lg leading-8 sm:leading-9 font-laoLooped ">
               <span className="block font-medium text-primary">
-                “ແນວຄວາມຄິດ: ຢູ່ນີ້ ແລະ ຮັບຮູ້ຄວາມຮູ້ສຶກຂອງເຮົາ.”
+                “ແນວຄວາມຄິດ: ເພາະຄວາມຮູ້ສຶກຂອງເຈົ້າມີຄຸນຄ່າ ແລະ "
+                ເຈົ້າບໍ່ໄດ້ຢູ່ຄົນດຽວ "
               </span>
               <br />
               <span className="font-bold text-primary">Be here</span>{" "}
