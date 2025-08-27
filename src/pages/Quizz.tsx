@@ -47,7 +47,7 @@ export default function App() {
   const data = raw as QuizData;
   const seed = useMemo(() => undefined as number | undefined, []);
   return (
-    <QuizProvider data={data} perSection={5} seed={seed}>
+    <QuizProvider data={data} perSection={5}  seed={seed}>
       <QuizScreen />
     </QuizProvider>
   );

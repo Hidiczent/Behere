@@ -61,6 +61,6 @@ export default function QuizProvider({
     isSubmitted,
     setSubmitted,
   };
-
+  
   return <QuizContext.Provider value={value}>{children}</QuizContext.Provider>;
 }

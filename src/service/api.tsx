@@ -1,5 +1,6 @@
 // src/service/api.ts
 import axios from "axios";
+import { redirect } from "react-router-dom";
 
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.toString() || "http://localhost:5050";
@@ -17,6 +18,7 @@ api.interceptors.request.use((config) => {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
   }
+  console.log("Request config:", config);
   return config;
 });
 
@@ -26,7 +28,7 @@ api.interceptors.response.use(
   (err) => {
     if (err?.response?.status === 401) {
       localStorage.removeItem("access_token");
-      // TODO: ถ้ามี router ที่นี่ อาจ redirect('/login')
+      redirect("/login");
     }
     return Promise.reject(err);
   }
