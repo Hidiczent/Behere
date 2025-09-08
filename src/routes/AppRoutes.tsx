@@ -10,6 +10,7 @@ import ContentDetail from "../pages/ContentDetail";
 import ChatChanel from "../pages/ChatRoom";
 import Quizz from "../pages/Quizz";
 import { Card } from "../components/content/Card";
+import PostsPage from "../pages/PostsPage";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -23,6 +24,7 @@ const AppRoutes = () => {
           <Route index element={<Card />} /> {/* /content */}
           <Route path=":id" element={<ContentDetail />} /> {/* /content/:id */}
         </Route>
+        <Route path="/postspage" element={<PostsPage />}/>
 
         {/* เท่ากับ /content/:id */}
         <Route path="/service" element={<Service />} />

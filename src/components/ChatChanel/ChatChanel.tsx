@@ -7,8 +7,9 @@ import ConfirmEndModal from "../Alert/ConfirmEndModal";
 import ReportModal from "./ReportModal";
 import { useSearchParams, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+// ---------- URL helpers ---------
 
-// ---------- URL helpers ----------
 const API_BASE =
   (import.meta.env.VITE_API_BASE_URL as string) || "http://localhost:5050";
 
@@ -54,6 +55,7 @@ function getCookie(name: string) {
 }
 
 export default function ChatBubbles() {
+  const navigate = useNavigate();
   const { authed, loading } = useAuth();
 
   const [sp] = useSearchParams();
@@ -575,7 +577,7 @@ export default function ChatBubbles() {
               wsRef.current.send(JSON.stringify({ type: "QUEUE_LEAVE" }));
               d("SEND QUEUE_LEAVE");
             }
-            history.back();
+            navigate("/chatlopby");
           }}
         />
       )}
@@ -600,7 +602,6 @@ export default function ChatBubbles() {
           setQueuing(false);
         }}
         conversationId={lastConversationId}
-        reportedUserId={peerId ?? undefined}
       />
     </>
   );
@@ -609,3 +610,4 @@ export default function ChatBubbles() {
 function label(r: Role) {
   return r === "venter" ? "ຜູ້ລະບາຍ" : "ຜູ້ຮັບຟັງ";
 }
+

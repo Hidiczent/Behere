@@ -54,6 +54,7 @@ export default function MatchingScreen({
             </button>
           )}
 
+
           {onCancel && (
             <Link
               to="/chatlopby" // ตรวจให้ตรงกับ router คุณ (ตอนนี้ใช้ /chatlopby)
@@ -67,4 +68,4 @@ export default function MatchingScreen({
       </div>
     </section>
   );
-}
+}  

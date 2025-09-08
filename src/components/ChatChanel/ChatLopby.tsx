@@ -1,4 +1,3 @@
-
 // src/pages/RoleIntro.tsx
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -15,7 +14,7 @@ type Props = {
 };
 
 export default function RoleIntro({
-  title = "ເລືອກບົດບາດ",
+  title = "ສຳນວນບົດບາດ",
   leftText = "ພ້ອມທີ່ຈະລະບາຍເລື່ອງໃນໃຈໃຫ້ຜູ້ຟັງ",
   rightText = "ພ້ອມທີ່ຈະຮັບຟັງຜູ້ລະບາຍແລ້ວ",
   leftLabel = "ຜູ້ລະບາຍ",
@@ -28,12 +27,13 @@ export default function RoleIntro({
   const { authed, loading } = useAuth();
 
   const destVenter = "/chatchanel?role=venter";
-  const destListener = "/chatchanel?role=listener";
+  const destListener = "/quizz"; // กด Listener → ไป Quiz (ต้องเลือกเอง)
 
+  // ฟังก์ชันป้องกัน ถ้ายังไม่ได้ login
   const guardClick =
     (dest: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
       if (!authed) {
-        e.preventDefault();
+        e.preventDefault(); // ยกเลิกการไปหน้าเดิม
         navigate(`/login?redirect=${encodeURIComponent(dest)}`);
       }
     };

@@ -47,6 +47,11 @@ export default function Navbar() {
           </NavLink>
         </li>
         <li>
+          <NavLink to="/postspage" className={linkClass}>
+            ພື້ນທີ່ສົນທະນາ
+          </NavLink>
+        </li>
+        <li>
           <NavLink to="/content" className={linkClass}>
             ຄຳແນະນຳ
           </NavLink>

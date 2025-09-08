@@ -1,5 +1,6 @@
 import { useMemo, type JSX } from "react";
 import { useQuiz } from "../../hooks/useQuiz";
+import { useNavigate } from "react-router-dom";
 
 // นับ "ตัวเลือกที่ถูกจริง"
 function isOptionCorrect(opt: {
@@ -16,6 +17,7 @@ const PASS_PERCENT = 70; // เกณฑ์ผ่านเป็นเปอร�
 
 export default function ResultSummary(): JSX.Element {
   const { linearQuestions, answers } = useQuiz();
+  const navigate = useNavigate();
 
   const { score, max, answered, correctPercent } = useMemo(() => {
     let s = 0;
@@ -30,8 +32,8 @@ export default function ResultSummary(): JSX.Element {
       answeredCount++;
       const opt = q.options.find((o) => o.id === sel);
       if (opt) {
-        s += opt.weight ?? 0; // คะแนนตาม weight (ถ้ามี partial credit)
-        if (isOptionCorrect(opt)) correctCount++; // นับ “ถูกจริง”
+        s += opt.weight ?? 0;
+        if (isOptionCorrect(opt)) correctCount++;
       }
     }
 
@@ -53,6 +55,10 @@ export default function ResultSummary(): JSX.Element {
   const dashOffset = C * (1 - correctPercent / 100);
   const stroke = isPassed ? "#16a34a" : "#ef4444";
 
+  const handleGoChat = () => {
+    navigate("/chatchanel?role=listener");
+  };
+
   return (
     <div className="max-w-[860px] mx-auto my-8 px-4">
       <div className="bg-white border border-slate-200 rounded-2xl px-5 pb-6 pt-5 shadow-[0_12px_30px_rgba(2,6,23,0.06)]">
@@ -62,7 +68,6 @@ export default function ResultSummary(): JSX.Element {
             ຜົນການທົດສອບ
           </h3>
 
-          {/* แสดงเฉพาะเปอร์เซ็นต์ผ่าน/ไม่ผ่าน */}
           {isPassed ? (
             <span className="px-3 py-1 rounded-lg bg-green-100 text-green-700 font-semibold text-sm">
               ✅ ຜ່ານເກັນ ({correctPercent}%)
@@ -113,7 +118,7 @@ export default function ResultSummary(): JSX.Element {
             </div>
           </div>
 
-          {/* stats (ข้อมูลกลาง ๆ ไม่บอกถูก/ผิดทีละข้อ) */}
+          {/* stats */}
           <dl className="grid grid-cols-3 gap-2 max-sm:grid-cols-1">
             <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
               <dt className="text-xs text-slate-600">ຕອບແລ້ວ</dt>
@@ -134,6 +139,32 @@ export default function ResultSummary(): JSX.Element {
               </dd>
             </div>
           </dl>
+        </div>
+
+        {/* ปุ่มไปห้องแชท / เลือกบทบาทใหม่ */}
+        <div className="mt-6 text-center">
+          {isPassed ? (
+            <button
+              onClick={handleGoChat}
+              className="rounded-md bg-primary text-secondary px-6 py-2 font-bold"
+            >
+              ເຂົ້າຫ້ອງສົນທະນາ
+            </button>
+          ) : (
+          //   <Link
+          //   to="/chatlopby"
+          //   className="rounded-md bg-red-500 text-white px-6 py-2 font-bold inline-block text-center"
+          // >
+          //     ເລືອກບົດບາດອີກຄັ້ງ
+          //   </Link>
+            <button
+              onClick={() => navigate("/chatlopby")}
+              className="rounded-md bg-red-500 text-white px-6 py-2 font-bold"
+            >
+              ເລືອກບົດບາດອີກຄັ້ງ
+            </button>
+
+          )}
         </div>
       </div>
     </div>

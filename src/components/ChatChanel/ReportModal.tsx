@@ -13,6 +13,8 @@ type Props = {
 type TabKey = "rate" | "report";
 type ReportReason = "spam" | "harassment" | "other";
 
+
+
 export default function ReportModal({ open, onClose, conversationId }: Props) {
   const { authed } = useAuth();
   const [tab, setTab] = useState<TabKey>("rate");
